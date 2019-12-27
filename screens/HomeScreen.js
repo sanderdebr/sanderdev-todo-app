@@ -28,8 +28,19 @@ const theme = {
 
 export default function HomeScreen() {
 
+  const initialState = [
+    {
+      title: 'Learn React Native',
+      status: true,
+    },
+    {
+      title: 'Learn React Hooks',
+      status: false
+    }
+  ];
+
   const [value, setValue] = useState('');
-  const [todos, setTodos] = useState([]);
+  const [todos, setTodos] = useState(initialState);
 
   const saveTodo =  (todoText) => {
     const trimmedText = todoText.trim();
@@ -44,11 +55,17 @@ export default function HomeScreen() {
   }
 
   const updateStatus = (todoIndex) => {
-    const newTodos = todos;
+    const newTodos = [...todos];
     newTodos[todoIndex].status = !newTodos[todoIndex].status;
     setTodos(newTodos);
-  };
+  }
 
+  const updateToDo = (todoIndex, element) => {
+    console.log('value:', todoIndex);
+    // const newTodos = [...todos];
+    // newTodos[todoIndex].title = value.target.value;
+    // setTodos(newTodos);
+  }
 
   const deleteTodo = (todoIndex) => {
       const newTodos = todos.filter((_, index) => index !== todoIndex);
@@ -73,7 +90,7 @@ export default function HomeScreen() {
                       setValue(event.target.value);
                     }}
                 />
-                <Button title="Add ToDo" onPress={() => saveTodo(value)} />
+                <Button title="Add ToDo" onPress={() => saveTodo(e)} />
 
                 </ThemeProvider>
 
@@ -83,6 +100,7 @@ export default function HomeScreen() {
               todos={todos} 
               deleteTodo={(todoIndex) => deleteTodo(todoIndex)}
               updateStatus={(todoIndex) => updateStatus(todoIndex)}
+              updateToDo={(todoIndex) => updateToDo(todoIndex)}
             />
 
       </ScrollView>

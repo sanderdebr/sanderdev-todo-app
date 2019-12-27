@@ -1,10 +1,10 @@
 import React from 'react';
 
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TextInput } from 'react-native';
 
 import { CheckBox } from 'react-native-elements';
 
-const ToDoList = ({ todos, deleteTodo, updateStatus }) => (
+const ToDoList = ({ todos, deleteTodo, updateStatus, updateToDo }) => (
     <View>
     {
         todos.map((todo, index) => (
@@ -16,7 +16,14 @@ const ToDoList = ({ todos, deleteTodo, updateStatus }) => (
                         updateStatus(index);
                      }}
                 />
-                <Text style={styles.headerText}>{todo.title}</Text> 
+                <TextInput
+                    style={todo.status === false ? styles.input : styles.inputDone}
+                    editable={!todo.status}
+                    value={todo.title}
+                    onChangeText={(element) => {
+                        updateToDo(index, element)
+                    }}
+                />
                 <CheckBox
                     checked
                     iconType='material'
@@ -35,7 +42,6 @@ const ToDoList = ({ todos, deleteTodo, updateStatus }) => (
 
 export default ToDoList;
 
-
 const styles = StyleSheet.create({
 
     todoContainer: {
@@ -44,7 +50,17 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         backgroundColor:'#f3f3f3'
-    }
+    },
+    inputDone: {
+        borderWidth: 0,
+        height: 40,
+        color: 'gray',
+        textDecorationLine: 'line-through'
+    },
+    input: {
+        borderWidth: 0,
+        height: 40
+    },
 
 });
   
