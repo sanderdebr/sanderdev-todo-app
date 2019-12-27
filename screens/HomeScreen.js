@@ -1,4 +1,5 @@
 import React from 'react';
+import { useState } from 'react';
 import {
   Platform,
   ScrollView,
@@ -9,6 +10,8 @@ import {
 } from 'react-native';
 
 import { Button, ThemeProvider, Input, CheckBox } from 'react-native-elements';
+
+import ToDoList from '../components/ToDoList.js';
 
 const theme = {
   Button: {
@@ -25,25 +28,32 @@ const theme = {
 
 export default function HomeScreen() {
 
-  const [value, onChangeText] = React.useState('');  
-  const [checked, setChecked] = React.useState(false);
+  const [value, setValue] = useState('');
+  const [todos, setTodos] = useState([]);
 
-  const [todos, updateTodos] = React.useState(
-        [
-            {
-                id: 0,
-                status: false,
-                date: '31-01-2019',
-                title: 'Learn React Native'
-            },
-            {
-                id: 1,
-                status: true,
-                date: '1-02-2019',
-                title: 'Teach JS'
-            }
-        ]
-  );
+  const saveTodo =  (todoText) => {
+    const trimmedText = todoText.trim();
+    const todo = {
+      title: trimmedText,
+      status: false
+    }
+    if (trimmedText.length > 0) {
+      setTodos([...todos, todo]);
+    }
+    setValue('');
+  }
+
+  const updateStatus = (todoIndex) => {
+    const newTodos = todos;
+    newTodos[todoIndex].status = !newTodos[todoIndex].status;
+    setTodos(newTodos);
+  };
+
+
+  const deleteTodo = (todoIndex) => {
+      const newTodos = todos.filter((_, index) => index !== todoIndex);
+      setTodos(newTodos);
+  }
 
   return (
     
@@ -51,41 +61,30 @@ export default function HomeScreen() {
 
       {/* Scrollable area */}
       <ScrollView>
-        <ThemeProvider theme={theme}>
-
             <View style={styles.addTodoContainer}>
+
+            <ThemeProvider theme={theme}>
 
                 <Text style={{fontSize: 30, fontWeight: 'bold', paddingBottom: 5}}>SanderDev ToDo</Text> 
                 <Input 
-                    onChangeText={text => onChangeText(text)}
+                    value={value}
                     placeholder='Add a ToDo'
+                    onChange={(event) => {
+                      setValue(event.target.value);
+                    }}
                 />
-                <Button title="Add ToDo" />
+                <Button title="Add ToDo" onPress={() => saveTodo(value)} />
+
+                </ThemeProvider>
 
             </View>
 
-            <View style={styles.toDoList}>
+            <ToDoList 
+              todos={todos} 
+              deleteTodo={(todoIndex) => deleteTodo(todoIndex)}
+              updateStatus={(todoIndex) => updateStatus(todoIndex)}
+            />
 
-                {
-                    todos.map(todo => {
-                        return (
-                            <CheckBox
-                                checkedColor='green'
-                                title={todo.title}
-                                checked={todo.status}
-                                onPress={() => setChecked(!checked)}
-                            />
-                        )
-                    })
-                }
-
-            </View>
-
-            <View style={styles.container}>
-                <Text>{value}</Text> 
-            </View> 
-
-        </ThemeProvider>
       </ScrollView>
 
       <View style={styles.tabBarInfoContainer}>
